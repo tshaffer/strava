@@ -1,0 +1,8 @@
+{
+	"name": "chatrooms",
+	"version": "0.0.1",
+	"description": "Minimalist multiroom chat server",
+	"dependencies": {
+		"mime": "~1.2.7"
+	}
+}

@@ -1,0 +1,26 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>StravaStatsByTed</title>
+    <script src="js/jquery-1.10.2.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $("#btnConnect").click(function () {
+                window.location.replace("https://www.strava.com/oauth/authorize?client_id=2055&response_type=code&redirect_uri=http://localHost:8080/tokenExchange.html&approval_prompt=force");
+                //alert("button");
+            });
+        });
+    </script>
+
+</head>
+<body>
+    <p>Hello Strava World!</p>
+
+    <div class="strava">
+        <input id="btnConnect" type="submit" value="Connect to Strava" />
+    </div>
+</body>
+</html>
