@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Strava test page</title>
+    <script src="js/jquery-2.1.1.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $("#btnTest").click(function () {
+
+                sUrl = "https://strava.com/api/v3/athlete?access_token=fb8085cc4c7f3633533e875eae3dc1e04cef06e8";
+
+                $.ajax({
+
+                    //url: 'https://strava.com/api/v3/athlete?access_token=fb8085cc4c7f3633533e875eae3dc1e04cef06e8',
+                    url: 'https://strava.com/api/v3/athlete',
+                    data: { "access_token" : "fb8085cc4c7f3633533e875eae3dc1e04cef06e8"},
+                    //data: myData,
+                    type: 'GET',
+                    crossDomain: true,
+                    dataType: 'jsonp',
+                    success: function () { alert("Success"); },
+                    error: function () { alert('Failed!'); },
+                    //beforeSend: setHeader
+                })
+                //$.get(sUrl, function (data, status, jqXHR) {
+                //    console.log("call made");
+                //    un = jqXHR.responseText;
+                //    console.log(un);
+                //})
+                .done(function () {
+                    console.log("done");
+                })
+                .success(function (data, textStatus, jqXHR) {
+                    console.log("success");
+                    console.log(textStatus);
+                    console.log(data);
+                    console.log("email address is " + data.email);
+                });
+                //window.location.replace("https://www.strava.com/oauth/authorize?client_id=2055&response_type=code&redirect_uri=http://localHost:8080/tokenExchange.html");
+            });
+        });
+    </script>
+
+</head>
+<body>
+    <p>Strava tester</p>
+
+    <div class="strava">
+        <input id="btnTest" type="submit" value="Test me now" />
+    </div>
+
+</body>
+</html>

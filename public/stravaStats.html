@@ -4,13 +4,13 @@
 <head>
     <meta charset="utf-8" />
     <title>StravaStatsByTed</title>
-    <script src="js/jquery-1.10.2.js"></script>
+    <script src="js/jquery-2.1.1.min.js"></script>
 
     <script>
         $(document).ready(function () {
             $("#btnConnect").click(function () {
-                window.location.replace("https://www.strava.com/oauth/authorize?client_id=2055&response_type=code&redirect_uri=http://localHost:8080/tokenExchange.html&approval_prompt=force");
-                //alert("button");
+                //window.location.replace("https://www.strava.com/oauth/authorize?client_id=2055&response_type=code&redirect_uri=http://localHost:8080/tokenExchange.html&approval_prompt=force");
+                window.location.replace("https://www.strava.com/oauth/authorize?client_id=2055&response_type=code&redirect_uri=http://localHost:8080/tokenExchange.html");
             });
         });
     </script>

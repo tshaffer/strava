@@ -4,11 +4,103 @@
 <head>
     <meta charset="utf-8" />
     <title>Eat more pizza</title>
-    <script src="js/jquery-1.10.2.js"></script>
+    <script src="js/jquery-2.1.1.min.js"></script>
 
     <script>
         $(document).ready(function () {
-            alert("Here I am!");
+            //alert("Here I am!");
+
+            function GetQueryStringParams(sParam) {
+                sPageURL = window.location.search.substring(1);
+                sURLVariables = sPageURL.split('&');
+                for (i = 0; i < sURLVariables.length; i++) {
+                    sParameterName = sURLVariables[i].split('=');
+                    if (sParameterName[0] == sParam) {
+                        return sParameterName[1];
+                    }
+                }
+                return "pizza";
+            }
+
+            function post(path, params, method) {
+                method = method || "post"; // Set method to post by default if not specified.
+
+                // The rest of this code assumes you are not using a library.
+                // It can be made less wordy if you use one.
+                var form = document.createElement("form");
+                form.setAttribute("method", method);
+                form.setAttribute("action", path);
+
+                for (var key in params) {
+                    if (params.hasOwnProperty(key)) {
+                        var hiddenField = document.createElement("input");
+                        hiddenField.setAttribute("type", "hidden");
+                        hiddenField.setAttribute("name", key);
+                        hiddenField.setAttribute("value", params[key]);
+
+                        form.appendChild(hiddenField);
+                    }
+                }
+
+                document.body.appendChild(form);
+                form.submit();
+            }
+
+            var code = GetQueryStringParams('code');
+
+            //alert("code is " + code);
+
+            postData = {}
+
+            postData.client_id = 2055;
+            postData.client_secret = "85f821429c9da1ef02b627058119a4253eafd16d";
+            postData.code = code;
+
+            $.ajax({
+                statusCode: {
+                    200: function () {
+                        alert("page found");
+                    },
+                    302: function () {
+                        alert("page redirect");
+                    }
+                },
+                url: "https://www.strava.com/oauth/token",
+                type: "POST",
+                dataType: 'jsonp',
+                cache: true,
+                jsonp: false,
+                jsonpCallback: 'localJsonpCallback',
+                contentType: 'application/json; charset=utf-8',
+                data: postData,
+                success: function () {
+                    alert("success");
+                },
+                error: function (jqxhr, textStatus, error) {
+                    alert("textStatus : " + textStatus + "\n error" + error);
+                }
+            });
+
+            function localJsonpCallback(data) {
+                alert("localJsonpCallback : " + data);
+            }
+
+
+            //post("https://www.strava.com/oauth/token", postData);
+
+            //$.post("https://www.strava.com/oauth/token", postData);
+
+            //var jqxhr = $.post("https://www.strava.com/oauth/token", postData);
+
+            //$.post("https://www.strava.com/oauth/token", postData, function (data) {
+            //    alert("Data loaded: " + data);
+            //});
+
+            //$.post("https://www.strava.com/oauth/token", postData)
+            //.done(function (data) {
+            //    alert("hello world");
+            //});
+
         });
     </script>
 </head>
