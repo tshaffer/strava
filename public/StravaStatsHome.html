@@ -7,13 +7,80 @@
 
     <script>
         $(document).ready(function () {
-
+            
             var activities;
+            var myActivityElements = [];
 
             var firstTime = true;
 
-            //$("#btnConnect").click(function () {
-            //});
+            function ActivityRetrievedCallback(data) {
+
+                console.log(data);
+
+                // ride date
+                d = new Date(data.start_date_local);
+                date = d.toDateString();
+
+                // distance
+                miles = data.distance * 0.000621371;
+
+                // riding time
+                hours = Math.floor(data.moving_time / 3600);
+
+                minutes = Math.floor((data.moving_time - 3600 * hours) / 60);
+                minutesStr = minutes.toString();
+                if (minutesStr.length == 1) {
+                    minutesStr = "0" + minutesStr;
+                }
+
+                seconds = Math.floor(data.moving_time - (3600 * hours) - (60 * minutes));
+                secondsStr = minutes.toString();
+                if (secondsStr.length == 1) {
+                    secondsStr = "0" + secondsStr;
+                }
+
+                movingTime = "";
+                if (hours > 0) {
+                    movingTime = hours + ':';
+                }
+                movingTime += minutesStr + ':' + secondsStr;
+
+                // elevation gain
+                elevationGain = data.total_elevation_gain * 3.28084;
+                elevationGain = Math.floor(elevationGain);
+
+                // average speed (meters per second)
+                mph = data.average_speed * 2.23694;
+
+                rowToAdd = '<tr><td>' + date + '</td><td>' + data.name + '</td><td>' + movingTime + '</td><td>' + miles.toFixed(0) + ' miles</td><td>' + elevationGain + ' ft</td><td>' + mph.toFixed(1) + ' mph</td><td>' + data.calories.toFixed(0) + '</td></tr>';
+                $('#myTable').append(rowToAdd);
+
+                if (myActivityElements.length == 0) {
+                    return;
+                }
+                else {
+                    element = myActivityElements.shift();
+                    GetDetailedActivityData(element);
+                }
+            }
+
+            function GetDetailedActivityData(element) {
+
+                $.ajax({
+                    url: 'https://www.strava.com/api/v3/activities/' + element.id.toString(),
+                    type: 'GET',
+                    dataType: 'jsonp',
+                    error: function () { alert('Failed!'); },
+                })
+
+                .success(function (data, textStatus, jqXHR) {
+                    console.log("success");
+                    console.log("activity success for element with id=" + element.id.toString());
+                    ActivityRetrievedCallback(data);
+                });
+            }
+
+            // get summary activities for the current athlete
             $.ajax({
                 url:'https://www.strava.com/api/v3/athlete/activities',
                 data: { "access_token": "fb8085cc4c7f3633533e875eae3dc1e04cef06e8" },
@@ -28,61 +95,20 @@
 
                 activities = data;
 
-                $.each(activities, function (index, element) {
 
-                    $.ajax({
-                        url: 'https://www.strava.com/api/v3/activities/' + element.id.toString(),
-                        type: 'GET',
-                        dataType: 'jsonp',
-                        error: function () { alert('Failed!'); },
-                    })
-                    .success(function (data, textStatus, jqXHR) {
-                        console.log("activity success for element with id" + element.id.toString());
-                        //console.log(textStatus);
-                        console.log(data);
-
-                        // ride date
-                        d = new Date(data.start_date_local);
-                        date = d.toDateString();
-
-                        // distance
-                        miles = data.distance * 0.000621371;
-
-                        // riding time
-                        hours = Math.floor(data.moving_time / 3600);
-
-                        minutes = Math.floor((data.moving_time - 3600 * hours) / 60);
-                        minutesStr = minutes.toString();
-                        if (minutesStr.length == 1) {
-                            minutesStr = "0" + minutesStr;
-                        }
-
-                        seconds = Math.floor(data.moving_time - (3600 * hours) - (60 * minutes));
-                        secondsStr = minutes.toString();
-                        if (secondsStr.length == 1) {
-                            secondsStr = "0" + secondsStr;
-                        }
-
-                        movingTime = "";
-                        if (hours > 0) {
-                            movingTime = hours + ':';
-                        }
-                        movingTime += minutesStr + ':' + secondsStr;
-
-                        // elevation gain
-                        elevationGain = data.total_elevation_gain * 3.28084;
-                        elevationGain = Math.floor(elevationGain);
-
-                        // average speed (meters per second)
-                        mph = data.average_speed * 2.23694;
-
-                        rowToAdd = '<tr><td>' + date + '</td><td>' + data.name + '</td><td>' + movingTime + '</td><td>' + miles.toFixed(0) + ' miles</td><td>' + elevationGain + ' ft</td><td>' + mph.toFixed(1) + ' mph</td><td>' + data.calories.toFixed(0) + '</td></tr>';
-                        $('#myTable').append(rowToAdd);
-
-                    });
-                        
+                $.each(activities, function (index, activityElement) {
+                    myActivityElements.push(activityElement);
                 });
 
+                var element;
+
+                if (myActivityElements.length > 0) {
+                    console.log("number of activity elements is " + myActivityElements.length);
+                    element = myActivityElements.shift();
+                    console.log("tried to grab an element");
+                    console.log("initial element id = " + element.id.toString());
+                    GetDetailedActivityData(element);
+                }
             });
         });
     </script>
