@@ -1,0 +1,138 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>StravaStatsByTed</title>
+    <script src="js/jquery-2.1.1.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            var activities;
+
+            var firstTime = true;
+
+            //$("#btnConnect").click(function () {
+            //});
+            $.ajax({
+                url:'https://www.strava.com/api/v3/athlete/activities',
+                data: { "access_token": "fb8085cc4c7f3633533e875eae3dc1e04cef06e8" },
+                type: 'GET',
+                dataType: 'jsonp',
+                error: function () { alert('Failed!'); },
+            })
+            .success(function (data, textStatus, jqXHR) {
+                console.log("success");
+                console.log(textStatus);
+                console.log(data);
+
+                activities = data;
+
+                $.each(activities, function (index, element) {
+
+                    // ride date
+                    d = new Date(element.start_date_local);
+                    date = d.toDateString();
+
+                    // distance
+                    miles = element.distance * 0.000621371;
+
+                    // riding time
+                    hours = Math.floor(element.moving_time / 3600);
+
+                    minutes = Math.floor((element.moving_time - 3600 * hours) / 60);
+                    minutesStr = minutes.toString();
+                    if (minutesStr.length == 1) {
+                        minutesStr = "0" + minutesStr;
+                    }
+                    
+                    seconds = Math.floor(element.moving_time - (3600 * hours) - (60 * minutes));
+                    secondsStr = minutes.toString();
+                    if (secondsStr.length == 1) {
+                        secondsStr = "0" + secondsStr;
+                    }
+
+                    movingTime = "";
+                    if (hours > 0) {
+                        movingTime = hours + ':';
+                    }
+                    movingTime += minutesStr + ':' + secondsStr;
+
+                    // elevation gain
+                    elevationGain = element.total_elevation_gain * 3.28084;
+                    elevationGain = Math.floor(elevationGain);
+
+                    // average speed (meters per second)
+                    mph = element.average_speed * 2.23694;
+                        
+                    //if (firstTime) {
+                    //    firstTime = false;
+
+                    //    $.ajax({
+                    //        url: 'https://www.strava.com/api/v3/activities/' + element.id.toString(),
+                    //        //data: { "access_token": "fb8085cc4c7f3633533e875eae3dc1e04cef06e8" },
+                    //        type: 'GET',
+                    //        dataType: 'jsonp',
+                    //        error: function () { alert('Failed!'); },
+                    //    })
+                    //   .success(function (data, textStatus, jqXHR) {
+                    //       console.log("activity success");
+                    //       //console.log(textStatus);
+                    //       console.log(data);
+
+                    //       rowToAdd = '<tr><td>' + date + '</td><td>' + element.name + '</td><td>' + movingTime + '</td><td>' + miles.toFixed(0) + ' miles</td><td>' + elevationGain + ' ft</td><td>' + mph.toFixed(1) + ' mph</td><td>' + data.calories + '</td></tr>';
+                    //       $('#myTable').append(rowToAdd);
+                    //   });
+
+                    //}
+                    //else {
+                    //    rowToAdd = '<tr><td>' + date + '</td><td>' + element.name + '</td><td>' + movingTime + '</td><td>' + miles.toFixed(0) + ' miles</td><td>' + elevationGain + ' ft</td><td>' + mph.toFixed(1) + ' mph</td><td>' + 'TBD' + '</td></tr>';
+                    //    $('#myTable').append(rowToAdd);
+                    //}
+
+                    rowToAdd = '<tr><td>' + date + '</td><td>' + element.name + '</td><td>' + movingTime + '</td><td>' + miles.toFixed(0) + ' miles</td><td>' + elevationGain + ' ft</td><td>' + mph.toFixed(1) + ' mph</td></tr>';
+                    $('#myTable').append(rowToAdd);
+                });
+
+            });
+        });
+    </script>
+
+    <style>
+        table,th,td
+        {
+            border:1px solid black;
+            border-collapse:collapse;
+        }
+        th,td
+        {
+            padding:5px;
+        }
+    </style>
+
+</head>
+<body>
+    <p>My Strava Data</p>
+
+    <table style="width:715px" id="myTable">
+        <col style="width:130px">
+        <col style="width:200px">
+        <col style="width:100px">
+        <col style="width:65px">
+        <col style="width:65px">
+        <col style="width:80px">
+        <col style="width:65px">
+    <tr>
+        <th>Date</th>
+        <th>Name</th>
+        <th>Riding Time</th>        
+        <th>Distance</th>
+        <th>Elevation</th>
+        <th>Average Speed</th>
+        <th>Calories</th>
+    </tr>
+
+    </table>
+
+</body>
+</html>

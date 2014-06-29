@@ -13,23 +13,48 @@
                 sUrl = "https://strava.com/api/v3/athlete?access_token=fb8085cc4c7f3633533e875eae3dc1e04cef06e8";
 
                 $.ajax({
-
+                    // get athlete
                     //url: 'https://strava.com/api/v3/athlete?access_token=fb8085cc4c7f3633533e875eae3dc1e04cef06e8',
-                    url: 'https://strava.com/api/v3/athlete',
-                    data: { "access_token" : "fb8085cc4c7f3633533e875eae3dc1e04cef06e8"},
-                    //data: myData,
+                    //url: 'https://strava.com/api/v3/athlete',
+                    //data: { "access_token": "fb8085cc4c7f3633533e875eae3dc1e04cef06e8" },
+                    //headers: { 'Authorization': 'Bearer ' + 'fb8085cc4c7f3633533e875eae3dc1e04cef06e8'},
+
+                    // kom - did not work
+                    //url: 'https://strava.com/api/v3/athlete/2843574/koms',
+                    //data: { "access_token": "fb8085cc4c7f3633533e875eae3dc1e04cef06e8" },
+
+                    // get activities - worked
+                    //url: 'https://strava.com/api/v3/athlete/activities',
+                    //data: { "access_token": "fb8085cc4c7f3633533e875eae3dc1e04cef06e8" },
+
+                    // retrieve an activity - did not work
+                    // was able to get it to work by sending the following in the browser + separately specifying the header
+                    // header was: Authorization : Bearer fb8085cc4c7f3633533e875eae3dc1e04cef06e8
+                    // https://www.strava.com/api/v3/activities/158581862
+                    // however, the following worked from the browser (but it did not seem to pay attention to the id - it just ignored it)
+                    // https://www.strava.com/api/v3/athlete/activities?access_token=fb8085cc4c7f3633533e875eae3dc1e04cef06e8&id=158581862
+                    //url: 'https://strava.com/api/v3/athlete/activities/158581862',
+                    ////data: { "access_token": "fb8085cc4c7f3633533e875eae3dc1e04cef06e8", "id": "158581862" },
+                    //data: { "access_token": "fb8085cc4c7f3633533e875eae3dc1e04cef06e8" },
+                    // the following works as well
+                    url:'https://www.strava.com/api/v3/athlete/activities',
+                    data: { "access_token": "fb8085cc4c7f3633533e875eae3dc1e04cef06e8", "per_page":1 },
+
+                    // list starred segments - worked
+                    //url: 'https://strava.com/api/v3/segments/starred',
+                    //data: { "access_token": "fb8085cc4c7f3633533e875eae3dc1e04cef06e8" },
+
+                    // header test - headers were set correctly
+                    //url: 'http://localHost:8080/testStrava.html',
+                    //beforeSend: function (xhr, settings) { console.log("in function"); xhr.setRequestHeader('Authorization', 'Bearer ' + 'fb8085cc4c7f3633533e875eae3dc1e04cef06e8'); },
+
                     type: 'GET',
-                    crossDomain: true,
+                    //crossDomain: true,
                     dataType: 'jsonp',
-                    success: function () { alert("Success"); },
+                    //beforeSend: function (xhr, settings) { console.log("in function"); xhr.setRequestHeader('Authorization', 'Bearer ' + 'fb8085cc4c7f3633533e875eae3dc1e04cef06e8'); },
+                    //success: function () { alert("Success"); },
                     error: function () { alert('Failed!'); },
-                    //beforeSend: setHeader
                 })
-                //$.get(sUrl, function (data, status, jqXHR) {
-                //    console.log("call made");
-                //    un = jqXHR.responseText;
-                //    console.log(un);
-                //})
                 .done(function () {
                     console.log("done");
                 })
@@ -39,7 +64,6 @@
                     console.log(data);
                     console.log("email address is " + data.email);
                 });
-                //window.location.replace("https://www.strava.com/oauth/authorize?client_id=2055&response_type=code&redirect_uri=http://localHost:8080/tokenExchange.html");
             });
         });
     </script>
